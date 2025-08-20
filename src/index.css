@@ -3,69 +3,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google News Inspired Design System */
+/* Premium News Theme - Dark Mode Only */
 
 @layer base {
   :root {
-    --background: 255 255 255;
-    --foreground: 32 33 36;
+    /* Dark theme variables */
+    --background: 10 10 10;
+    --foreground: 250 250 250;
 
-    --card: 255 255 255;
-    --card-foreground: 32 33 36;
+    --card: 20 20 23;
+    --card-foreground: 250 250 250;
 
-    --popover: 255 255 255;
-    --popover-foreground: 32 33 36;
+    --popover: 20 20 23;
+    --popover-foreground: 250 250 250;
 
-    --primary: 66 133 244;
-    --primary-foreground: 255 255 255;
+    --primary: 142 188 255;
+    --primary-foreground: 15 15 15;
 
-    --secondary: 248 249 250;
-    --secondary-foreground: 95 99 104;
+    --secondary: 39 39 42;
+    --secondary-foreground: 250 250 250;
 
-    --muted: 248 249 250;
-    --muted-foreground: 95 99 104;
+    --muted: 39 39 42;
+    --muted-foreground: 161 161 170;
 
-    --accent: 66 133 244;
-    --accent-foreground: 255 255 255;
+    --accent: 142 188 255;
+    --accent-foreground: 15 15 15;
 
-    --destructive: 234 67 53;
-    --destructive-foreground: 255 255 255;
+    --destructive: 239 68 68;
+    --destructive-foreground: 250 250 250;
 
-    --border: 218 220 224;
-    --input: 218 220 224;
-    --ring: 66 133 244;
+    --border: 39 39 42;
+    --input: 39 39 42;
+    --ring: 142 188 255;
 
-    --radius: 8px;
-  }
-
-  .dark {
-    --background: 18 18 18;
-    --foreground: 232 234 237;
-
-    --card: 32 33 36;
-    --card-foreground: 232 234 237;
-
-    --popover: 32 33 36;
-    --popover-foreground: 232 234 237;
-
-    --primary: 138 180 248;
-    --primary-foreground: 18 18 18;
-
-    --secondary: 48 49 52;
-    --secondary-foreground: 154 160 166;
-
-    --muted: 48 49 52;
-    --muted-foreground: 154 160 166;
-
-    --accent: 138 180 248;
-    --accent-foreground: 18 18 18;
-
-    --destructive: 242 139 130;
-    --destructive-foreground: 18 18 18;
-
-    --border: 48 49 52;
-    --input: 48 49 52;
-    --ring: 138 180 248;
+    --radius: 12px;
   }
 }
 
@@ -74,113 +45,146 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  html {
+    @apply dark;
   }
 
-  /* Google News Typography */
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--card)) 100%);
+    min-height: 100vh;
+  }
+
+  /* Premium Typography */
   .text-headline {
-    @apply text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight text-foreground leading-tight;
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-foreground leading-tight;
+    font-weight: 800;
+    letter-spacing: -0.025em;
   }
 
   .text-subheadline {
-    @apply text-base md:text-lg font-medium text-foreground leading-snug;
+    @apply text-lg md:text-xl font-semibold text-foreground leading-snug;
+    font-weight: 700;
+    letter-spacing: -0.015em;
   }
 
   .text-body {
-    @apply text-sm text-muted-foreground leading-relaxed;
+    @apply text-base text-muted-foreground leading-relaxed;
+    line-height: 1.7;
   }
 
   .text-caption {
-    @apply text-xs text-muted-foreground;
+    @apply text-sm text-muted-foreground;
   }
 }
 
 @layer components {
-  /* Google News Card Styling */
+  /* Premium News Card */
   .news-card {
-    @apply bg-card rounded-xl border border-border/30 transition-all duration-300 ease-out;
-    @apply hover:border-border hover:shadow-xl hover:shadow-black/5;
-    @apply dark:hover:shadow-black/20;
+    @apply bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50;
+    @apply transition-all duration-500 ease-out;
+    @apply hover:bg-card hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/10;
+    @apply hover:scale-[1.02] hover:-translate-y-1;
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.25);
   }
 
   .news-card:hover {
-    @apply transform translate-y-[-2px];
+    box-shadow: 0 25px 50px -12px rgba(142, 188, 255, 0.15);
   }
 
-  /* Improved button styles */
+  /* Premium Navigation */
   .nav-button {
-    @apply px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ease-out;
-    @apply hover:bg-secondary/80 hover:text-secondary-foreground;
-    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out;
+    @apply hover:bg-secondary/80 hover:text-foreground hover:scale-105;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
     @apply active:scale-95;
+    backdrop-filter: blur(12px);
   }
 
   .nav-button.active {
-    @apply bg-primary text-primary-foreground shadow-sm;
+    @apply bg-primary text-primary-foreground shadow-lg shadow-primary/25;
+    @apply hover:bg-primary/90;
   }
 
   .icon-button {
-    @apply p-2.5 rounded-full transition-all duration-200 ease-out;
-    @apply hover:bg-secondary/60 hover:text-secondary-foreground;
-    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply p-3 rounded-xl transition-all duration-300 ease-out;
+    @apply hover:bg-secondary/60 hover:text-foreground hover:scale-110;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
     @apply active:scale-95;
+    backdrop-filter: blur(12px);
   }
 
-  /* Enhanced hover effects */
+  /* Enhanced Hover Effects */
   .hover-lift {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-500 ease-out;
   }
 
   .hover-lift:hover {
-    @apply transform translate-y-[-2px] shadow-lg shadow-black/10;
-    @apply dark:shadow-black/30;
+    @apply transform -translate-y-2 shadow-2xl shadow-primary/20;
   }
 
-  .hover-scale {
-    @apply transition-transform duration-300 ease-out hover:scale-[1.02];
+  /* Premium Button Styles */
+  .premium-button {
+    @apply bg-gradient-to-r from-primary to-accent text-primary-foreground;
+    @apply hover:from-primary/90 hover:to-accent/90;
+    @apply shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30;
+    @apply transition-all duration-300 ease-out;
   }
 
-  /* Improved skeleton loader */
-  .skeleton {
-    @apply animate-pulse bg-muted/50 rounded-lg relative overflow-hidden;
-  }
-
-  .skeleton::after {
-    @apply absolute inset-0 bg-gradient-to-r from-transparent via-background/30 to-transparent animate-shimmer;
-    content: '';
-  }
-
-  /* Enhanced sentiment badges */
+  /* Sentiment Badges */
   .sentiment-positive {
-    @apply bg-green-50 text-green-700 border-green-200;
-    @apply dark:bg-green-950/30 dark:text-green-400 dark:border-green-800/50;
+    @apply bg-emerald-500/20 text-emerald-400 border-emerald-500/30;
   }
 
   .sentiment-neutral {
-    @apply bg-gray-50 text-gray-700 border-gray-200;
-    @apply dark:bg-gray-950/30 dark:text-gray-400 dark:border-gray-800/50;
+    @apply bg-slate-500/20 text-slate-400 border-slate-500/30;
   }
 
   .sentiment-negative {
-    @apply bg-red-50 text-red-700 border-red-200;
-    @apply dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/50;
+    @apply bg-red-500/20 text-red-400 border-red-500/30;
   }
 
-  /* Google News navbar style */
+  /* Premium Navbar */
   .navbar-glass {
-    @apply bg-background/95 backdrop-blur-xl border-b border-border/50;
-    @apply supports-[backdrop-filter]:bg-background/80;
+    @apply bg-background/80 backdrop-blur-2xl border-b border-border/30;
+    @apply shadow-lg shadow-black/10;
   }
 
-  /* Enhanced image styles */
+  /* Enhanced Image Styles */
   .article-image {
-    @apply w-full h-full object-cover transition-transform duration-500 ease-out;
-    @apply group-hover:scale-105;
+    @apply w-full h-full object-cover transition-all duration-700 ease-out;
+    @apply group-hover:scale-110 group-hover:brightness-110;
   }
 
-  /* Better text truncation */
+  /* Premium Gradient Overlays */
+  .gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 40%,
+      rgba(0, 0, 0, 0.8) 95%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  }
+
+  /* Loading Animations */
+  .skeleton {
+    @apply animate-pulse bg-muted/30 rounded-xl relative overflow-hidden;
+  }
+
+  .skeleton::after {
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent;
+    content: '';
+    animation: shimmer 2s infinite;
+  }
+
+  /* Premium Text Effects */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  /* Enhanced Line Clamping */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -194,6 +198,13 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 @layer utilities {
@@ -201,16 +212,7 @@
     text-wrap: balance;
   }
   
-  /* Enhanced animations */
-  .animate-fast {
-    animation-duration: 200ms;
-  }
-
-  .animate-medium {
-    animation-duration: 400ms;
-  }
-
-  /* Improved staggered animations */
+  /* Animation Delays */
   .animate-delay-100 {
     animation-delay: 100ms;
   }
@@ -222,56 +224,57 @@
   .animate-delay-300 {
     animation-delay: 300ms;
   }
+}
 
-  /* Enhanced gradients */
-  .gradient-overlay {
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.7) 100%
-    );
+/* Custom Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
   }
-
-  .dark .gradient-overlay {
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(0, 0, 0, 0.2) 50%,
-      rgba(0, 0, 0, 0.8) 100%
-    );
+  100% {
+    transform: translateX(100%);
   }
 }
 
-/* Custom scrollbar */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted/30;
+  @apply bg-muted/20;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full;
+  @apply bg-primary/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/50;
+  @apply bg-primary/70;
 }
 
-/* Better focus styles */
-.focus-visible {
-  @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
-}
-
-/* Enhanced responsive design */
+/* Responsive Design */
 @media (max-width: 640px) {
   .news-card {
-    @apply rounded-lg;
+    @apply rounded-xl;
   }
   
   .nav-button {
-    @apply px-3 py-2 text-xs;
+    @apply px-4 py-2 text-xs;
   }
 }

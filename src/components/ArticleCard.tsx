@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Clock, Bookmark, BookmarkCheck, ExternalLink } from 'lucide-react';
+import { Clock, Bookmark, BookmarkCheck, ExternalLink, Eye } from 'lucide-react';
 import { Article, useNews } from '../contexts/NewsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,54 +48,54 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         className="news-card cursor-pointer overflow-hidden animate-fade-in group relative"
         onClick={onClick}
       >
-        <div className="relative h-80 md:h-96 lg:h-[28rem]">
+        <div className="relative h-96 md:h-[32rem] lg:h-[36rem]">
           <img
             src={article.image}
             alt={article.title}
             className="article-image"
             loading="lazy"
           />
-          <div className="absolute inset-0 gradient-overlay" />
+          <div className="gradient-overlay absolute inset-0" />
           
           {/* Content overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
-            <div className="flex items-center gap-3 mb-4">
-              <Badge className="capitalize bg-primary/90 hover:bg-primary text-primary-foreground">
+          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
+            <div className="flex items-center gap-4 mb-6">
+              <Badge className="capitalize bg-primary/90 hover:bg-primary text-primary-foreground px-4 py-2">
                 {article.category}
               </Badge>
               {article.sentiment && (
-                <Badge variant="outline" className="text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                <Badge variant="outline" className={`sentiment-${article.sentiment} border-white/40 bg-white/10 backdrop-blur-sm px-3 py-1`}>
                   {article.sentiment}
                 </Badge>
               )}
               <div className="flex items-center text-white/80 text-sm">
-                <Clock className="h-4 w-4 mr-1" />
+                <Clock className="h-4 w-4 mr-2" />
                 {formatTime(article.publishedAt)}
               </div>
             </div>
             
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-balance leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-balance leading-tight">
               {article.title}
             </h2>
-            <p className="text-lg text-white/90 line-clamp-3 mb-6 leading-relaxed">
+            <p className="text-xl text-white/90 line-clamp-3 mb-8 leading-relaxed">
               {article.description}
             </p>
             
             <div className="flex items-center justify-between">
-              <Button variant="secondary" className="hover-lift bg-white/90 text-gray-900 hover:bg-white">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Read Full Story
+              <Button variant="secondary" className="hover-lift bg-white/95 text-gray-900 hover:bg-white px-6 py-3 text-base font-medium">
+                <Eye className="h-5 w-5 mr-2" />
+                Read Full Article
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleBookmark}
-                className="text-white hover:text-white hover:bg-white/20 backdrop-blur-sm"
+                className="text-white hover:text-white hover:bg-white/20 backdrop-blur-sm p-3"
               >
                 {isBookmarked ? (
-                  <BookmarkCheck className="h-5 w-5" />
+                  <BookmarkCheck className="h-6 w-6" />
                 ) : (
-                  <Bookmark className="h-5 w-5" />
+                  <Bookmark className="h-6 w-6" />
                 )}
               </Button>
             </div>
@@ -110,7 +110,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       className="news-card cursor-pointer overflow-hidden animate-fade-in group h-full flex flex-col"
       onClick={onClick}
       style={{
-        animationDelay: `${Math.random() * 200}ms`
+        animationDelay: `${Math.random() * 300}ms`
       }}
     >
       <div className="relative aspect-video overflow-hidden">
@@ -120,8 +120,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           className="article-image"
           loading="lazy"
         />
-        <div className="absolute top-3 left-3">
-          <Badge className="capitalize bg-primary/90 hover:bg-primary text-primary-foreground text-xs">
+        <div className="absolute top-4 left-4">
+          <Badge className="capitalize bg-primary/90 hover:bg-primary text-primary-foreground text-sm px-3 py-1">
             {article.category}
           </Badge>
         </div>
@@ -129,7 +129,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           variant="ghost"
           size="sm"
           onClick={handleBookmark}
-          className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm hover:bg-white text-gray-900 border-0 h-8 w-8 p-0"
+          className="absolute top-4 right-4 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white border-0 h-9 w-9 p-0 rounded-full transition-all duration-300"
         >
           {isBookmarked ? (
             <BookmarkCheck className="h-4 w-4" />
@@ -139,34 +139,34 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </Button>
       </div>
       
-      <div className="p-5 flex-1 flex flex-col">
-        <div className="flex items-center gap-2 mb-3">
+      <div className="p-6 flex-1 flex flex-col">
+        <div className="flex items-center gap-3 mb-4">
           {article.sentiment && (
-            <Badge variant="outline" className={`sentiment-${article.sentiment} text-xs`}>
+            <Badge variant="outline" className={`sentiment-${article.sentiment} text-xs px-2 py-1`}>
               {article.sentiment}
             </Badge>
           )}
-          <div className="flex items-center text-muted-foreground text-xs">
-            <Clock className="h-3 w-3 mr-1" />
+          <div className="flex items-center text-muted-foreground text-sm">
+            <Clock className="h-4 w-4 mr-2" />
             {formatTime(article.publishedAt)}
           </div>
         </div>
         
-        <h3 className="text-subheadline mb-3 line-clamp-2 group-hover:text-primary transition-colors flex-shrink-0">
+        <h3 className="text-subheadline mb-4 line-clamp-2 group-hover:text-primary transition-colors flex-shrink-0">
           {article.title}
         </h3>
         
-        <p className="text-body line-clamp-3 mb-4 flex-1">
+        <p className="text-body line-clamp-3 mb-6 flex-1">
           {article.description}
         </p>
         
         {article.summary && (
-          <div className="space-y-2 mb-4">
-            <p className="text-xs font-medium text-muted-foreground">Key Points:</p>
-            <ul className="space-y-1">
+          <div className="space-y-3 mb-6">
+            <p className="text-sm font-medium text-muted-foreground">Key Points:</p>
+            <ul className="space-y-2">
               {article.summary.slice(0, 2).map((point, index) => (
-                <li key={index} className="text-xs text-muted-foreground flex items-start">
-                  <span className="w-1 h-1 bg-primary rounded-full mr-2 mt-1.5 flex-shrink-0"></span>
+                <li key={index} className="text-sm text-muted-foreground flex items-start">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mr-3 mt-2 flex-shrink-0"></span>
                   <span className="line-clamp-2">{point}</span>
                 </li>
               ))}
@@ -176,10 +176,10 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         
         <Button 
           variant="ghost" 
-          className="w-full justify-start p-0 h-auto text-primary hover:text-primary hover-lift mt-auto"
+          className="w-full justify-center premium-button mt-auto py-3 text-sm font-medium"
         >
-          <ExternalLink className="h-4 w-4 mr-2" />
-          Read more
+          <Eye className="h-4 w-4 mr-2" />
+          Read Full Story
         </Button>
       </div>
     </div>

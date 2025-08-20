@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 interface Article {
@@ -11,6 +10,9 @@ interface Article {
   sentiment?: 'positive' | 'neutral' | 'negative';
   summary?: string[];
   publishedAt: string;
+  author?: string;
+  source?: string;
+  url?: string;
 }
 
 interface NewsState {
