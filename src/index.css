@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google News Inspired Dark Theme Design System */
+/* Google News Inspired Design System */
 
 @layer base {
   :root {
@@ -16,7 +16,7 @@
     --popover: 255 255 255;
     --popover-foreground: 32 33 36;
 
-    --primary: 26 115 232;
+    --primary: 66 133 244;
     --primary-foreground: 255 255 255;
 
     --secondary: 248 249 250;
@@ -25,7 +25,7 @@
     --muted: 248 249 250;
     --muted-foreground: 95 99 104;
 
-    --accent: 26 115 232;
+    --accent: 66 133 244;
     --accent-foreground: 255 255 255;
 
     --destructive: 234 67 53;
@@ -33,50 +33,39 @@
 
     --border: 218 220 224;
     --input: 218 220 224;
-    --ring: 26 115 232;
+    --ring: 66 133 244;
 
-    --radius: 0.5rem;
-
-    /* Google News specific colors */
-    --google-blue: 26 115 232;
-    --google-grey: 95 99 104;
-    --google-light-grey: 248 249 250;
-    --google-dark-grey: 60 64 67;
+    --radius: 8px;
   }
 
   .dark {
-    --background: 32 33 36;
+    --background: 18 18 18;
     --foreground: 232 234 237;
 
-    --card: 48 49 52;
+    --card: 32 33 36;
     --card-foreground: 232 234 237;
 
-    --popover: 48 49 52;
+    --popover: 32 33 36;
     --popover-foreground: 232 234 237;
 
     --primary: 138 180 248;
-    --primary-foreground: 32 33 36;
+    --primary-foreground: 18 18 18;
 
-    --secondary: 60 64 67;
+    --secondary: 48 49 52;
     --secondary-foreground: 154 160 166;
 
-    --muted: 60 64 67;
+    --muted: 48 49 52;
     --muted-foreground: 154 160 166;
 
     --accent: 138 180 248;
-    --accent-foreground: 32 33 36;
+    --accent-foreground: 18 18 18;
 
     --destructive: 242 139 130;
-    --destructive-foreground: 32 33 36;
+    --destructive-foreground: 18 18 18;
 
-    --border: 60 64 67;
-    --input: 60 64 67;
+    --border: 48 49 52;
+    --input: 48 49 52;
     --ring: 138 180 248;
-
-    --google-blue: 138 180 248;
-    --google-grey: 154 160 166;
-    --google-light-grey: 60 64 67;
-    --google-dark-grey: 232 234 237;
   }
 }
 
@@ -87,12 +76,12 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   /* Google News Typography */
   .text-headline {
-    @apply text-xl md:text-2xl lg:text-3xl font-medium tracking-tight text-foreground leading-tight;
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight text-foreground leading-tight;
   }
 
   .text-subheadline {
@@ -111,69 +100,99 @@
 @layer components {
   /* Google News Card Styling */
   .news-card {
-    @apply bg-card rounded-lg border border-border/50 hover:border-border transition-all duration-200 ease-out hover:shadow-md;
+    @apply bg-card rounded-xl border border-border/30 transition-all duration-300 ease-out;
+    @apply hover:border-border hover:shadow-xl hover:shadow-black/5;
+    @apply dark:hover:shadow-black/20;
   }
 
   .news-card:hover {
-    @apply transform translate-y-[-1px];
+    @apply transform translate-y-[-2px];
   }
 
-  /* Button hover effects that don't hide content */
+  /* Improved button styles */
   .nav-button {
-    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ease-out;
-    @apply hover:bg-secondary hover:text-secondary-foreground;
+    @apply px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ease-out;
+    @apply hover:bg-secondary/80 hover:text-secondary-foreground;
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply active:scale-95;
   }
 
   .nav-button.active {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary text-primary-foreground shadow-sm;
   }
 
   .icon-button {
-    @apply p-2 rounded-full transition-all duration-200 ease-out;
-    @apply hover:bg-secondary hover:text-secondary-foreground;
+    @apply p-2.5 rounded-full transition-all duration-200 ease-out;
+    @apply hover:bg-secondary/60 hover:text-secondary-foreground;
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply active:scale-95;
   }
 
-  /* Improved hover effects */
+  /* Enhanced hover effects */
   .hover-lift {
-    @apply transition-all duration-200 ease-out;
+    @apply transition-all duration-300 ease-out;
   }
 
   .hover-lift:hover {
-    @apply transform translate-y-[-2px] shadow-lg;
+    @apply transform translate-y-[-2px] shadow-lg shadow-black/10;
+    @apply dark:shadow-black/30;
   }
 
   .hover-scale {
-    @apply transition-transform duration-200 ease-out hover:scale-[1.02];
+    @apply transition-transform duration-300 ease-out hover:scale-[1.02];
   }
 
-  /* Google-style skeleton loader */
+  /* Improved skeleton loader */
   .skeleton {
-    @apply animate-pulse bg-muted rounded;
+    @apply animate-pulse bg-muted/50 rounded-lg relative overflow-hidden;
   }
 
   .skeleton::after {
-    @apply absolute inset-0 bg-gradient-to-r from-transparent via-background/50 to-transparent animate-shimmer;
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-background/30 to-transparent animate-shimmer;
     content: '';
   }
 
-  /* Sentiment badges */
+  /* Enhanced sentiment badges */
   .sentiment-positive {
-    @apply bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800;
+    @apply bg-green-50 text-green-700 border-green-200;
+    @apply dark:bg-green-950/30 dark:text-green-400 dark:border-green-800/50;
   }
 
   .sentiment-neutral {
-    @apply bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800;
+    @apply bg-gray-50 text-gray-700 border-gray-200;
+    @apply dark:bg-gray-950/30 dark:text-gray-400 dark:border-gray-800/50;
   }
 
   .sentiment-negative {
-    @apply bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800;
+    @apply bg-red-50 text-red-700 border-red-200;
+    @apply dark:bg-red-950/30 dark:text-red-400 dark:border-red-800/50;
   }
 
   /* Google News navbar style */
   .navbar-glass {
-    @apply bg-background/95 backdrop-blur-sm border-b border-border/50;
+    @apply bg-background/95 backdrop-blur-xl border-b border-border/50;
+    @apply supports-[backdrop-filter]:bg-background/80;
+  }
+
+  /* Enhanced image styles */
+  .article-image {
+    @apply w-full h-full object-cover transition-transform duration-500 ease-out;
+    @apply group-hover:scale-105;
+  }
+
+  /* Better text truncation */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
@@ -182,16 +201,16 @@
     text-wrap: balance;
   }
   
-  /* Fast animations for production */
+  /* Enhanced animations */
   .animate-fast {
-    animation-duration: 150ms;
+    animation-duration: 200ms;
   }
 
   .animate-medium {
-    animation-duration: 300ms;
+    animation-duration: 400ms;
   }
 
-  /* Staggered animations for loading */
+  /* Improved staggered animations */
   .animate-delay-100 {
     animation-delay: 100ms;
   }
@@ -203,15 +222,34 @@
   .animate-delay-300 {
     animation-delay: 300ms;
   }
+
+  /* Enhanced gradients */
+  .gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+
+  .dark .gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 50%,
+      rgba(0, 0, 0, 0.8) 100%
+    );
+  }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted;
+  @apply bg-muted/30;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -220,4 +258,20 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/50;
+}
+
+/* Better focus styles */
+.focus-visible {
+  @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 640px) {
+  .news-card {
+    @apply rounded-lg;
+  }
+  
+  .nav-button {
+    @apply px-3 py-2 text-xs;
+  }
 }
