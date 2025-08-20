@@ -47,12 +47,19 @@ const Index: React.FC = () => {
         dispatch({ type: 'SET_LOADING', payload: true });
       }
       
+      console.log('Loading news for category:', state.selectedCategory);
+      
       const articles = await fetchNews({ 
         category: state.selectedCategory === 'general' ? 'technology' : state.selectedCategory,
-        count: 12 
+        count: 12,
+        min_length: 700,
+        max_length: 2000
       });
       
+      console.log('Loaded articles:', articles.length);
+      
       dispatch({ type: 'SET_ARTICLES', payload: articles });
+      dispatch({ type: 'SET_ERROR', payload: null });
       setRetryCount(0);
       
       if (!showLoading) {
@@ -67,20 +74,22 @@ const Index: React.FC = () => {
       
       dispatch({ 
         type: 'SET_ERROR', 
-        payload: `${errorMessage}. Please try again.`
+        payload: `Connection issue: ${errorMessage}. Retrying automatically...`
       });
       
-      // Auto-retry logic
+      // Auto-retry logic with exponential backoff
       if (retryCount < 3 && isOnline) {
+        const retryDelay = 2000 * Math.pow(2, retryCount); // 2s, 4s, 8s
         setTimeout(() => {
+          console.log(`Retrying... attempt ${retryCount + 1}/3`);
           setRetryCount(prev => prev + 1);
           loadNews(false, true);
-        }, 2000 * (retryCount + 1));
+        }, retryDelay);
       }
       
       toast({
-        title: "Error Loading News",
-        description: errorMessage,
+        title: "Loading Issue",
+        description: `${errorMessage}. ${retryCount < 3 ? 'Retrying automatically...' : 'Please try again.'}`,
         variant: "destructive",
       });
     }
@@ -88,6 +97,7 @@ const Index: React.FC = () => {
 
   // Load news on mount and category change
   useEffect(() => {
+    console.log('Category changed to:', state.selectedCategory);
     loadNews();
   }, [state.selectedCategory]);
 
@@ -96,6 +106,7 @@ const Index: React.FC = () => {
     if (!isOnline) return;
     
     const interval = setInterval(() => {
+      console.log('Auto-refreshing news...');
       loadNews(false);
     }, 5 * 60 * 1000);
 
@@ -103,11 +114,13 @@ const Index: React.FC = () => {
   }, [loadNews, isOnline]);
 
   const handleArticleClick = (article: any) => {
+    console.log('Opening article:', article.title);
     setSelectedArticle(article);
     setIsModalOpen(true);
   };
 
   const handleRefresh = () => {
+    console.log('Manual refresh triggered');
     setRetryCount(0);
     loadNews();
   };
@@ -130,7 +143,7 @@ const Index: React.FC = () => {
               {isOnline ? (
                 <>
                   <Wifi className="h-4 w-4 mr-2 text-green-500" />
-                  Stay updated with the latest stories
+                  Live updates • {state.articles.length} articles loaded
                 </>
               ) : (
                 <>
@@ -155,15 +168,15 @@ const Index: React.FC = () => {
 
         {/* Error State */}
         {state.error && (
-          <Alert className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
+          <Alert className="mb-6 border-destructive/50 bg-destructive/10">
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <AlertDescription className="flex items-center justify-between text-destructive">
               <span>{state.error}</span>
               <Button
                 onClick={handleRefresh}
                 variant="link"
                 size="sm"
-                className="ml-2 p-0 h-auto"
+                className="ml-2 p-0 h-auto text-destructive hover:text-destructive"
               >
                 Try again
               </Button>
@@ -217,7 +230,7 @@ const Index: React.FC = () => {
             <div className="text-6xl mb-4">📰</div>
             <h3 className="text-xl font-medium mb-2">No articles found</h3>
             <p className="text-muted-foreground mb-6">
-              Try refreshing or selecting a different category
+              We're working to load the latest news. Try refreshing or check your connection.
             </p>
             <Button onClick={handleRefresh} className="hover-lift" disabled={!isOnline}>
               <RefreshCw className="h-4 w-4 mr-2" />
@@ -227,11 +240,11 @@ const Index: React.FC = () => {
         )}
 
         {/* Retry indicator */}
-        {retryCount > 0 && state.isLoading && (
-          <div className="fixed bottom-4 right-4 bg-card border border-border rounded-lg p-3 shadow-lg animate-fade-in">
+        {retryCount > 0 && (
+          <div className="fixed bottom-4 right-4 bg-card border border-border rounded-lg p-3 shadow-lg animate-fade-in z-50">
             <div className="flex items-center space-x-2">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <span className="text-sm">Retrying... ({retryCount}/3)</span>
+              <RefreshCw className="h-4 w-4 animate-spin text-primary" />
+              <span className="text-sm">Reconnecting... ({retryCount}/3)</span>
             </div>
           </div>
         )}
