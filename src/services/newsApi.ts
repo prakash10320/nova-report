@@ -1,15 +1,10 @@
 
-const API_BASE_URL = 'https://news-generator-api-l4yd.onrender.com';
-const API_KEY = 'test5678';
+// Using your Flask backend instead of direct API calls
+const BACKEND_BASE_URL = 'http://localhost:5000';
 
 interface NewsApiParams {
   category?: string;
   count?: number;
-  min_length?: number;
-  max_length?: number;
-  img_width?: number | null;
-  img_height?: number | null;
-  img_quality?: number | null;
 }
 
 const generateSentiment = (): 'positive' | 'neutral' | 'negative' => {
@@ -18,7 +13,6 @@ const generateSentiment = (): 'positive' | 'neutral' | 'negative' => {
 };
 
 const generateSummary = (content: string): string[] => {
-  // Simple AI-like summary generation (in a real app, this would be server-side)
   const sentences = content.split('.').filter(s => s.trim().length > 20);
   const keyPoints = sentences.slice(0, 3).map((sentence, index) => {
     const points = [
@@ -37,34 +31,37 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     const defaultParams = {
       category: 'technology',
       count: 12,
-      min_length: 700,
-      max_length: 2000,
-      img_width: null,
-      img_height: null,
-      img_quality: null,
       ...params
     };
 
-    console.log('Fetching news with params:', defaultParams);
+    console.log('Fetching news from Flask backend:', defaultParams);
 
-    const response = await fetch(`${API_BASE_URL}/generate-news`, {
-      method: 'POST',
+    const queryParams = new URLSearchParams({
+      category: defaultParams.category,
+      count: defaultParams.count.toString()
+    });
+
+    const response = await fetch(`${BACKEND_BASE_URL}/get-news?${queryParams}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': API_KEY,
-      },
-      body: JSON.stringify(defaultParams)
+      }
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
+      throw new Error(`Backend request failed: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('Backend Response:', data);
 
-    // Transform the API response to match our Article interface
-    const articles = data.map((item: any, index: number) => ({
+    // Handle error from backend
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    // Transform the backend response to match our Article interface
+    const articles = (Array.isArray(data) ? data : [data]).map((item: any, index: number) => ({
       id: `${Date.now()}-${index}`,
       title: item.title || 'Breaking News',
       description: item.description || item.content?.substring(0, 200) + '...' || 'No description available',
@@ -78,14 +75,12 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
 
     return articles;
   } catch (error) {
-    console.error('Error fetching news:', error);
+    console.error('Error fetching news from backend:', error);
     throw error;
   }
 };
 
 export const searchNews = async (query: string) => {
-  // In a real implementation, this would search the API
-  // For now, we'll fetch general news and filter by query
   try {
     const articles = await fetchNews({ count: 20 });
     return articles.filter(article => 

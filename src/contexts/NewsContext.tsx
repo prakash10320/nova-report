@@ -35,7 +35,7 @@ type NewsAction =
 const initialState: NewsState = {
   articles: [],
   bookmarks: [],
-  selectedCategory: 'technology',
+  selectedCategory: 'general',
   isLoading: false,
   error: null,
   darkMode: false,
@@ -87,7 +87,7 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Load from localStorage on mount
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
-    const selectedCategory = localStorage.getItem('selectedCategory') || 'technology';
+    const selectedCategory = localStorage.getItem('selectedCategory') || 'general';
     const darkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
     
     if (darkMode) {
