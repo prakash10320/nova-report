@@ -54,7 +54,10 @@ const newsReducer = (state: NewsState, action: NewsAction): NewsState => {
       localStorage.setItem('bookmarks', JSON.stringify(filteredBookmarks));
       return { ...state, bookmarks: filteredBookmarks };
     case 'SET_CATEGORY':
-      localStorage.setItem('selectedCategory', action.payload);
+      // Only save non-search categories to localStorage
+      if (action.payload !== 'search') {
+        localStorage.setItem('selectedCategory', action.payload);
+      }
       return { ...state, selectedCategory: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };

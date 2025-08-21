@@ -74,8 +74,71 @@ const generateMockArticles = (category: string, count: number = 12) => {
   const categoryTitles = mockTitles[category as keyof typeof mockTitles] || mockTitles.general;
   const mockArticles = [];
   
+  // Generate diverse images for each category
+  const categoryImages = {
+    technology: [
+      'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=800&h=400&fit=crop'
+    ],
+    business: [
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=400&fit=crop'
+    ],
+    sports: [
+      'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1546525848-3ce03ca516f6?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1593030103066-0093718efeb9?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1571002857488-d8c470449ba6?w=800&h=400&fit=crop'
+    ],
+    health: [
+      'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&h=400&fit=crop'
+    ],
+    science: [
+      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1562736103-0ed70a7bd32e?w=800&h=400&fit=crop'
+    ],
+    world: [
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1589519160732-57fc498494f8?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1569098644584-210bcd375b59?w=800&h=400&fit=crop'
+    ],
+    entertainment: [
+      'https://images.unsplash.com/photo-1489599375274-055414489dfb?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1594736797933-d0cccba59711?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=400&fit=crop'
+    ],
+    general: [
+      'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?w=800&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?w=800&h=400&fit=crop'
+    ]
+  };
+  
+  const images = categoryImages[category as keyof typeof categoryImages] || categoryImages.general;
+  
   for (let i = 0; i < count; i++) {
     const titleIndex = i % categoryTitles.length;
+    const imageIndex = i % images.length;
     const title = categoryTitles[titleIndex];
     
     mockArticles.push({
@@ -97,7 +160,7 @@ Expert commentary from leading authorities in the field provides additional insi
 As this story continues to unfold, our newsroom remains committed to providing accurate, timely reporting that keeps readers informed about important developments. We continue to monitor the situation closely and will provide updates as new information becomes available.
 
 The implications of these developments extend beyond immediate industry concerns, potentially influencing policy decisions and strategic planning across multiple sectors. This broader impact underscores the importance of continued attention to these evolving circumstances.`,
-      image: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}?w=800&h=400&fit=crop&auto=format&q=80&sig=${Math.random()}`,
+      image: images[imageIndex],
       category: category,
       sentiment: ['positive', 'neutral', 'negative'][Math.floor(Math.random() * 3)] as 'positive' | 'neutral' | 'negative',
       summary: [
@@ -178,10 +241,36 @@ const generateAISummary = (content: string, category: string): string[] => {
   return summaryPoints;
 };
 
+// Enhanced image URL validation and fixing
+const validateAndFixImageUrl = (url: string): string | null => {
+  if (!url) return null;
+  
+  // Clean up the URL
+  const cleanUrl = url.trim().replace(/[\[\]"']/g, '');
+  
+  // Check if it's a valid URL
+  if (!cleanUrl.match(/^https?:\/\/.+/)) return null;
+  
+  // Check if it's a direct image URL
+  if (cleanUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i)) {
+    return cleanUrl;
+  }
+  
+  // For Unsplash URLs, ensure proper format
+  if (cleanUrl.includes('unsplash.com')) {
+    if (!cleanUrl.includes('?')) {
+      return `${cleanUrl}?w=800&h=400&fit=crop&auto=format&q=80`;
+    }
+    return cleanUrl;
+  }
+  
+  return cleanUrl;
+};
+
 export const fetchNews = async (params: NewsApiParams = {}) => {
   const defaultParams = {
     category: 'technology',
-    count: 12,
+    count: 15,
     min_length: 1200,
     max_length: 3000,
     img_width: 800,
@@ -190,12 +279,11 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     ...params
   };
 
-  console.log('Attempting to fetch news with params:', defaultParams);
+  console.log('Fetching news with params:', defaultParams);
 
   try {
-    // Try the API first with a longer timeout for slow server
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
 
     const response = await fetch(`${API_BASE_URL}/`, {
       method: 'POST',
@@ -217,7 +305,7 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     }
 
     const data = await response.json();
-    console.log('API Response data received:', data);
+    console.log('API Response received:', data);
 
     if (data.error) {
       throw new Error(data.error);
@@ -231,7 +319,6 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     } else if (data.articles && Array.isArray(data.articles)) {
       articlesArray = data.articles;
     } else if (data.title || data.headline) {
-      // Single article response
       articlesArray = [data];
     } else {
       throw new Error('Invalid API response format');
@@ -242,25 +329,34 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
       const title = item.title || item.headline || `Breaking ${params.category || 'Technology'} News`;
       const description = item.description || item.summary || (content.substring(0, 200) + '...');
       
-      // Better image URL handling with multiple fallback options
-      let imageUrl = item.image || item.image_url || item.img || item.photo || item.picture;
+      // Enhanced image URL handling
+      let imageUrl = null;
+      const possibleImageFields = [
+        item.image, item.image_url, item.img, item.photo, item.picture,
+        item.featured_image, item.thumbnail, item.media
+      ];
       
-      // Validate image URL
-      if (!imageUrl || !imageUrl.startsWith('http')) {
-        // Generate a category-specific Unsplash image
+      for (const field of possibleImageFields) {
+        if (field) {
+          imageUrl = validateAndFixImageUrl(field);
+          if (imageUrl) break;
+        }
+      }
+      
+      // If no valid image found, use category-specific fallback
+      if (!imageUrl) {
         const categoryImages = {
-          technology: 'photo-1518709268805-4e9042af9f23',
-          business: 'photo-1507679799987-c73779587ccf',
-          sports: 'photo-1461896836934-ffe607ba8211',
-          health: 'photo-1559757148-5c350d0d3c56',
-          science: 'photo-1532094349884-543bc11b234d',
-          entertainment: 'photo-1489599904581-c03925e0c4b7',
-          world: 'photo-1504711434969-e33886168f5c',
-          general: 'photo-1504711434969-e33886168f5c'
+          technology: `https://images.unsplash.com/photo-${1518709268805 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          business: `https://images.unsplash.com/photo-${1486406146926 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          sports: `https://images.unsplash.com/photo-${1461896836934 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          health: `https://images.unsplash.com/photo-${1559757148000 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          science: `https://images.unsplash.com/photo-${1532094349884 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          entertainment: `https://images.unsplash.com/photo-${1489599375274 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          world: `https://images.unsplash.com/photo-${1506905925346 + index}?w=800&h=400&fit=crop&auto=format&q=80`,
+          general: `https://images.unsplash.com/photo-${1504711434969 + index}?w=800&h=400&fit=crop&auto=format&q=80`
         };
         
-        const categoryImage = categoryImages[params.category as keyof typeof categoryImages] || categoryImages.general;
-        imageUrl = `https://images.unsplash.com/${categoryImage}?w=800&h=400&fit=crop&auto=format&q=80`;
+        imageUrl = categoryImages[params.category as keyof typeof categoryImages] || categoryImages.general;
       }
       
       return {
@@ -279,41 +375,65 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
       };
     });
 
-    console.log('Successfully transformed API articles:', articles.length);
-    console.log('Sample article with image:', articles[0]);
-    
-    // If we got fewer articles than requested, pad with some mock articles
-    if (articles.length < (params.count || 12)) {
-      const additionalMockCount = (params.count || 12) - articles.length;
-      const mockArticles = generateMockArticles(params.category || 'technology', additionalMockCount);
-      articles.push(...mockArticles);
-    }
+    console.log('Successfully processed API articles:', articles.length);
     
     return articles;
 
   } catch (error) {
     console.warn('API failed, using mock data:', error);
-    
-    // Return mock data when API fails
-    const mockArticles = generateMockArticles(params.category || 'technology', params.count || 12);
-    console.log('Generated mock articles:', mockArticles.length);
-    return mockArticles;
+    return generateMockArticles(params.category || 'technology', params.count || 15);
   }
 };
 
 export const searchNews = async (query: string) => {
+  if (!query.trim()) return [];
+  
+  console.log('Searching for:', query);
+  
   try {
-    const articles = await fetchNews({ count: 20 });
-    return articles.filter(article => 
+    // Try to search using the API with search-like parameters
+    const searchParams = {
+      category: 'general',
+      count: 20,
+      min_length: 800,
+      max_length: 2500
+    };
+    
+    const articles = await fetchNews(searchParams);
+    
+    // Filter articles based on search query
+    const filteredArticles = articles.filter(article => 
       article.title.toLowerCase().includes(query.toLowerCase()) ||
-      article.description.toLowerCase().includes(query.toLowerCase())
+      article.description.toLowerCase().includes(query.toLowerCase()) ||
+      article.content.toLowerCase().includes(query.toLowerCase()) ||
+      article.category.toLowerCase().includes(query.toLowerCase())
     );
+    
+    // If no matches found, generate some mock search results
+    if (filteredArticles.length === 0) {
+      const mockSearchResults = generateMockArticles('general', 5).map(article => ({
+        ...article,
+        title: `${query.charAt(0).toUpperCase() + query.slice(1)} News: ${article.title}`,
+        description: `Latest updates on ${query}. ${article.description}`,
+        category: 'search'
+      }));
+      
+      return mockSearchResults;
+    }
+    
+    return filteredArticles;
+    
   } catch (error) {
     console.error('Error searching news:', error);
-    // Return mock search results
-    return generateMockArticles('general', 10).filter(article =>
-      article.title.toLowerCase().includes(query.toLowerCase()) ||
-      article.description.toLowerCase().includes(query.toLowerCase())
-    );
+    
+    // Return mock search results as fallback
+    const mockResults = generateMockArticles('general', 5).map(article => ({
+      ...article,
+      title: `${query.charAt(0).toUpperCase() + query.slice(1)} News: ${article.title}`,
+      description: `Latest updates on ${query}. ${article.description}`,
+      category: 'search'
+    }));
+    
+    return mockResults;
   }
 };

@@ -1,12 +1,13 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
-import { RefreshCw, AlertCircle, Wifi, WifiOff, TrendingUp, Newspaper, Filter } from 'lucide-react';
+import { AlertCircle, Wifi, WifiOff, TrendingUp, Newspaper } from 'lucide-react';
 import { useNews } from '../contexts/NewsContext';
 import { fetchNews } from '../services/newsApi';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import ArticleCard from '../components/ArticleCard';
 import ArticleModal from '../components/ArticleModal';
 import SkeletonCard from '../components/SkeletonCard';
-import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 
@@ -23,7 +24,7 @@ const Index: React.FC = () => {
       setIsOnline(true);
       toast({
         title: "Connection Restored",
-        description: "You're back online! Refreshing content...",
+        description: "You're back online! Loading latest news...",
       });
       if (state.articles.length === 0) {
         loadNews(false);
@@ -49,11 +50,6 @@ const Index: React.FC = () => {
 
   const loadNews = useCallback(async (showLoading = true) => {
     if (!isOnline && state.articles.length > 0) {
-      toast({
-        title: "Offline Mode",
-        description: "Showing cached articles. Connect to internet for latest news.",
-        variant: "destructive",
-      });
       return;
     }
 
@@ -64,7 +60,9 @@ const Index: React.FC = () => {
       
       dispatch({ type: 'SET_ERROR', payload: null });
       
-      const categoryParam = state.selectedCategory === 'general' ? 'technology' : state.selectedCategory;
+      const categoryParam = state.selectedCategory === 'general' ? 'technology' : 
+                           state.selectedCategory === 'search' ? 'general' : state.selectedCategory;
+      
       const articles = await fetchNews({ 
         category: categoryParam,
         count: 15,
@@ -90,40 +88,43 @@ const Index: React.FC = () => {
       
       dispatch({ 
         type: 'SET_ERROR', 
-        payload: `Unable to fetch latest news. ${!isOnline ? 'You appear to be offline.' : 'Please check your connection and try again.'}`
+        payload: `Unable to fetch latest news. ${!isOnline ? 'You appear to be offline.' : 'Please check your connection.'}`
       });
       
-      toast({
-        title: "Loading Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      if (showLoading) {
+        toast({
+          title: "Loading Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
     }
   }, [state.selectedCategory, dispatch, isOnline, state.articles.length]);
 
+  // Load news when category changes, but not for search
   useEffect(() => {
-    loadNews();
+    if (state.selectedCategory !== 'search') {
+      loadNews();
+    }
   }, [state.selectedCategory]);
 
+  // Auto-refresh news every 10 minutes when online and page is visible
   useEffect(() => {
-    if (!isOnline) return;
+    if (!isOnline || state.selectedCategory === 'search') return;
     
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
+        console.log('Auto-refreshing news...');
         loadNews(false);
       }
-    }, 15 * 60 * 1000);
+    }, 10 * 60 * 1000); // 10 minutes
 
     return () => clearInterval(interval);
-  }, [loadNews, isOnline]);
+  }, [loadNews, isOnline, state.selectedCategory]);
 
   const handleArticleClick = (article: any) => {
     setSelectedArticle(article);
     setIsModalOpen(true);
-  };
-
-  const handleRefresh = () => {
-    loadNews(true);
   };
 
   const getCategoryTitle = () => {
@@ -136,6 +137,7 @@ const Index: React.FC = () => {
       case 'world': return 'World News';
       case 'entertainment': return 'Entertainment';
       case 'science': return 'Science & Innovation';
+      case 'search': return 'Search Results';
       default: return `${state.selectedCategory.charAt(0).toUpperCase() + state.selectedCategory.slice(1)} News`;
     }
   };
@@ -157,78 +159,58 @@ const Index: React.FC = () => {
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-        {/* Enhanced Mobile-First Header */}
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 md:mb-10">
           <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6">
             <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl shadow-lg">
               <Newspaper className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary" />
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
                 {getCategoryTitle()}
-              </h2>
+              </h1>
               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-1 sm:mt-2">
                 <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
                   {isOnline ? (
                     <>
                       <Wifi className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-emerald-500" />
-                      Live updates
+                      <span className="hidden sm:inline">Live updates • </span>
+                      <span className="sm:hidden">Live • </span>
                     </>
                   ) : (
                     <>
                       <WifiOff className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 text-destructive" />
-                      Offline mode
+                      <span className="hidden sm:inline">Offline mode • </span>
+                      <span className="sm:hidden">Offline • </span>
+                    </>
+                  )}
+                  <span>{state.articles.length} articles</span>
+                  {state.selectedCategory !== 'search' && (
+                    <>
+                      <span className="mx-1">•</span>
+                      <span>Updated {getLastRefreshTime()}</span>
                     </>
                   )}
                 </div>
-                <span className="hidden sm:inline text-muted-foreground">•</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  {state.articles.length} articles
-                </span>
-                <span className="hidden sm:inline text-muted-foreground">•</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  Updated {getLastRefreshTime()}
-                </span>
               </div>
             </div>
           </div>
-          
-          <Button
-            onClick={handleRefresh}
-            disabled={state.isLoading || !isOnline}
-            variant="outline"
-            size="sm"
-            className="w-full sm:w-auto bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary/20 hover:to-accent/20 border-primary/20 hover:border-primary/40 transition-all duration-300"
-          >
-            <RefreshCw className={`h-4 w-4 sm:h-5 sm:w-5 mr-2 ${state.isLoading ? 'animate-spin' : ''}`} />
-            {state.isLoading ? 'Loading...' : 'Refresh'}
-          </Button>
         </div>
 
         {/* Error State */}
         {state.error && (
           <Alert className="mb-6 sm:mb-8 border-destructive/20 bg-destructive/5 backdrop-blur-sm rounded-2xl">
             <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
-            <AlertDescription className="flex flex-col sm:flex-row sm:items-center justify-between text-destructive gap-2 sm:gap-4">
-              <span className="text-sm sm:text-base">{state.error}</span>
-              {isOnline && (
-                <Button
-                  onClick={handleRefresh}
-                  variant="link"
-                  size="sm"
-                  className="self-start sm:self-auto p-0 h-auto text-destructive hover:text-destructive/80 text-sm"
-                >
-                  Retry now
-                </Button>
-              )}
+            <AlertDescription className="text-destructive text-sm sm:text-base">
+              {state.error}
             </AlertDescription>
           </Alert>
         )}
 
-        {/* Hero Article - Enhanced Mobile Layout */}
+        {/* Hero Article */}
         {state.isLoading && !heroArticle ? (
           <div className="mb-6 sm:mb-8 md:mb-10">
-            <div className="animate-pulse bg-muted/50 rounded-3xl h-[60vh] sm:h-[70vh] md:h-[80vh]"></div>
+            <div className="animate-pulse bg-muted/30 rounded-3xl h-[60vh] sm:h-[70vh] md:h-[80vh] border border-border/20"></div>
           </div>
         ) : heroArticle ? (
           <div className="mb-6 sm:mb-8 md:mb-10">
@@ -240,7 +222,7 @@ const Index: React.FC = () => {
           </div>
         ) : null}
 
-        {/* Articles Grid - Better Mobile Responsiveness */}
+        {/* Articles Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {state.isLoading && regularArticles.length === 0
             ? Array.from({ length: 9 }, (_, i) => (
@@ -259,7 +241,7 @@ const Index: React.FC = () => {
           }
         </div>
 
-        {/* Enhanced Empty State */}
+        {/* Empty State */}
         {!state.isLoading && state.articles.length === 0 && (
           <div className="text-center py-16 sm:py-20 md:py-24 px-4">
             <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-xl">
@@ -267,22 +249,18 @@ const Index: React.FC = () => {
             </div>
             <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">No articles available</h3>
             <p className="text-muted-foreground mb-8 sm:mb-10 max-w-md mx-auto text-base sm:text-lg leading-relaxed">
-              {isOnline 
-                ? "We're having trouble loading the latest news. Please try again." 
-                : "You're currently offline. Please check your connection and try again."
+              {state.selectedCategory === 'search' 
+                ? "No search results found. Try a different search term." 
+                : isOnline 
+                  ? "We're having trouble loading the latest news. The page will automatically refresh." 
+                  : "You're currently offline. Please check your connection."
               }
             </p>
-            <Button 
-              onClick={handleRefresh} 
-              className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 px-6 sm:px-8 py-3 text-base font-medium rounded-xl shadow-lg" 
-              disabled={!isOnline || state.isLoading}
-            >
-              <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              {state.isLoading ? 'Loading...' : 'Try Again'}
-            </Button>
           </div>
         )}
       </main>
+
+      <Footer />
 
       {/* Article Modal */}
       {selectedArticle && (
