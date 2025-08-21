@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Clock, Bookmark, BookmarkCheck, ExternalLink, Eye } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Bookmark, BookmarkCheck, ExternalLink, Eye, ImageIcon } from 'lucide-react';
 import { Article, useNews } from '../contexts/NewsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   variant = 'default' 
 }) => {
   const { state, dispatch } = useNews();
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const isBookmarked = state.bookmarks.some(bookmark => bookmark.id === article.id);
 
   const handleBookmark = (e: React.MouseEvent) => {
@@ -26,6 +28,15 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     } else {
       dispatch({ type: 'ADD_BOOKMARK', payload: article });
     }
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    console.log('Image failed to load for article:', article.title, 'URL:', article.image);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   const formatTime = (dateString: string) => {
@@ -42,6 +53,9 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
     }
   };
 
+  // Fallback image for when API image fails
+  const fallbackImage = `https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=400&fit=crop&auto=format&q=80`;
+
   if (variant === 'hero') {
     return (
       <div 
@@ -49,12 +63,33 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         onClick={onClick}
       >
         <div className="relative h-96 md:h-[32rem] lg:h-[36rem]">
-          <img
-            src={article.image}
-            alt={article.title}
-            className="article-image"
-            loading="lazy"
-          />
+          {/* Image with loading state */}
+          <div className="relative w-full h-full bg-muted/20">
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/10 animate-pulse">
+                <ImageIcon className="h-16 w-16 text-muted-foreground/30" />
+              </div>
+            )}
+            
+            {imageError ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/20 to-muted/40">
+                <div className="text-center">
+                  <ImageIcon className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                  <p className="text-muted-foreground text-sm">Image unavailable</p>
+                </div>
+              </div>
+            ) : (
+              <img
+                src={article.image || fallbackImage}
+                alt={article.title}
+                className={`article-image transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                loading="lazy"
+                onError={handleImageError}
+                onLoad={handleImageLoad}
+              />
+            )}
+          </div>
+          
           <div className="gradient-overlay absolute inset-0" />
           
           {/* Content overlay */}
@@ -114,12 +149,30 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       }}
     >
       <div className="relative aspect-video overflow-hidden">
-        <img
-          src={article.image}
-          alt={article.title}
-          className="article-image"
-          loading="lazy"
-        />
+        {/* Image with loading and error states */}
+        <div className="relative w-full h-full bg-muted/20">
+          {!imageLoaded && !imageError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-muted/10 animate-pulse">
+              <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+            </div>
+          )}
+          
+          {imageError ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/20 to-muted/40">
+              <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+          ) : (
+            <img
+              src={article.image || fallbackImage}
+              alt={article.title}
+              className={`article-image transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              loading="lazy"
+              onError={handleImageError}
+              onLoad={handleImageLoad}
+            />
+          )}
+        </div>
+        
         <div className="absolute top-4 left-4">
           <Badge className="capitalize bg-primary/90 hover:bg-primary text-primary-foreground text-sm px-3 py-1">
             {article.category}

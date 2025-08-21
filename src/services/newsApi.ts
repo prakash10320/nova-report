@@ -242,12 +242,33 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
       const title = item.title || item.headline || `Breaking ${params.category || 'Technology'} News`;
       const description = item.description || item.summary || (content.substring(0, 200) + '...');
       
+      // Better image URL handling with multiple fallback options
+      let imageUrl = item.image || item.image_url || item.img || item.photo || item.picture;
+      
+      // Validate image URL
+      if (!imageUrl || !imageUrl.startsWith('http')) {
+        // Generate a category-specific Unsplash image
+        const categoryImages = {
+          technology: 'photo-1518709268805-4e9042af9f23',
+          business: 'photo-1507679799987-c73779587ccf',
+          sports: 'photo-1461896836934-ffe607ba8211',
+          health: 'photo-1559757148-5c350d0d3c56',
+          science: 'photo-1532094349884-543bc11b234d',
+          entertainment: 'photo-1489599904581-c03925e0c4b7',
+          world: 'photo-1504711434969-e33886168f5c',
+          general: 'photo-1504711434969-e33886168f5c'
+        };
+        
+        const categoryImage = categoryImages[params.category as keyof typeof categoryImages] || categoryImages.general;
+        imageUrl = `https://images.unsplash.com/${categoryImage}?w=800&h=400&fit=crop&auto=format&q=80`;
+      }
+      
       return {
-        id: `api-${Date.now()}-${index}-${Math.random()}`,
+        id: `api-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`,
         title: title,
         description: description,
         content: content || `This is a comprehensive report about ${title.toLowerCase()}. Our editorial team provides detailed analysis and expert insights into this developing story, offering readers essential context and understanding of the broader implications. The story continues to evolve as new information becomes available from reliable sources and industry experts.`,
-        image: item.image || item.image_url || item.img || `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}?w=800&h=400&fit=crop&auto=format&q=80&sig=${Math.random()}`,
+        image: imageUrl,
         category: params.category || 'technology',
         sentiment: generateSentiment(),
         summary: generateAISummary(content, params.category || 'technology'),
@@ -259,6 +280,7 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     });
 
     console.log('Successfully transformed API articles:', articles.length);
+    console.log('Sample article with image:', articles[0]);
     
     // If we got fewer articles than requested, pad with some mock articles
     if (articles.length < (params.count || 12)) {

@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { X, Clock, Share2, Bookmark, BookmarkCheck, ExternalLink, Bot, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Clock, Share2, Bookmark, BookmarkCheck, ExternalLink, Bot, Sparkles, ImageIcon } from 'lucide-react';
 import { Article, useNews } from '../contexts/NewsContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,8 @@ interface ArticleModalProps {
 
 const ArticleModal: React.FC<ArticleModalProps> = ({ article, isOpen, onClose }) => {
   const { state, dispatch } = useNews();
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const isBookmarked = state.bookmarks.some(bookmark => bookmark.id === article.id);
 
   const handleBookmark = () => {
@@ -36,6 +38,15 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ article, isOpen, onClose })
     }
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+    console.log('Modal image failed to load for article:', article.title, 'URL:', article.image);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -47,20 +58,39 @@ const ArticleModal: React.FC<ArticleModalProps> = ({ article, isOpen, onClose })
     });
   };
 
+  const fallbackImage = `https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=400&fit=crop&auto=format&q=80`;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto p-0 bg-card/95 backdrop-blur-xl border-border/50">
         <div className="relative">
-          {/* Header Image */}
+          {/* Header Image with better error handling */}
           <div className="relative h-80 md:h-96 overflow-hidden">
-            <img
-              src={article.image}
-              alt={article.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=400&fit=crop&auto=format&q=80';
-              }}
-            />
+            <div className="relative w-full h-full bg-muted/20">
+              {!imageLoaded && !imageError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted/10 animate-pulse">
+                  <ImageIcon className="h-16 w-16 text-muted-foreground/30" />
+                </div>
+              )}
+              
+              {imageError ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/20 to-muted/40">
+                  <div className="text-center text-muted-foreground">
+                    <ImageIcon className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                    <p>Image unavailable</p>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={article.image || fallbackImage}
+                  alt={article.title}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
+                />
+              )}
+            </div>
+            
             <div className="gradient-overlay absolute inset-0" />
             
             {/* Close button */}
