@@ -12,35 +12,98 @@ const generateMockArticles = (category: string, count: number = 12) => {
     science: 'Scientific Discovery'
   };
 
+  const mockTitles = {
+    technology: [
+      'Revolutionary AI Breakthrough Changes Industry Standards',
+      'New Quantum Computing Milestone Achieved by Research Team',
+      'Major Tech Company Announces Sustainable Innovation Initiative',
+      'Cybersecurity Expert Warns of Emerging Digital Threats',
+      'Breakthrough in Renewable Energy Storage Technology',
+    ],
+    business: [
+      'Global Markets React to New Economic Policy Announcement',
+      'Startup Raises Record-Breaking Series A Funding Round',
+      'Major Corporate Merger Creates Industry Giant',
+      'Economic Growth Indicators Show Positive Trends',
+      'New Trade Agreement Impacts International Commerce',
+    ],
+    sports: [
+      'Championship Finals Set Record Viewership Numbers',
+      'Rising Star Athlete Breaks Long-Standing World Record',
+      'Major League Announces Expansion Plans for Next Season',
+      'Olympic Preparations Intensify Across Multiple Nations',
+      'Sports Medicine Breakthrough Aids Athlete Recovery',
+    ],
+    health: [
+      'Medical Researchers Make Breakthrough in Treatment Development',
+      'Global Health Initiative Launches Vaccination Campaign',
+      'New Study Reveals Important Lifestyle Health Benefits',
+      'Healthcare Technology Improves Patient Care Standards',
+      'Mental Health Awareness Program Shows Positive Results',
+    ],
+    science: [
+      'Space Mission Discovers Unprecedented Cosmic Phenomenon',
+      'Climate Scientists Report Significant Environmental Changes',
+      'Archaeological Team Uncovers Ancient Civilization Evidence',
+      'Marine Biology Research Reveals New Ocean Species',
+      'Particle Physics Experiment Confirms Theoretical Predictions',
+    ],
+    world: [
+      'International Summit Addresses Global Climate Initiative',
+      'Diplomatic Relations Strengthen Between Allied Nations',
+      'Cultural Exchange Program Promotes International Understanding',
+      'Humanitarian Efforts Provide Relief in Crisis Region',
+      'World Leaders Collaborate on Sustainable Development Goals',
+    ],
+    entertainment: [
+      'Film Festival Showcases Independent Cinema Talent',
+      'Music Industry Adapts to Digital Streaming Revolution',
+      'Television Series Breaks Streaming Platform Records',
+      'Celebrity Philanthropist Launches Educational Foundation',
+      'Arts Community Celebrates Cultural Heritage Month',
+    ],
+    general: [
+      'Community Initiative Brings Positive Change to Local Area',
+      'Educational Program Receives National Recognition Award',
+      'Environmental Conservation Effort Shows Promising Results',
+      'Public Safety Measures Enhance Community Security',
+      'Local Business Innovation Supports Economic Growth',
+    ]
+  };
+
+  const categoryTitles = mockTitles[category as keyof typeof mockTitles] || mockTitles.general;
   const mockArticles = [];
   
   for (let i = 0; i < count; i++) {
-    const categoryName = categories[category as keyof typeof categories] || 'Latest News';
+    const titleIndex = i % categoryTitles.length;
+    const title = categoryTitles[titleIndex];
     
     mockArticles.push({
       id: `mock-${category}-${Date.now()}-${i}`,
-      title: `${categoryName}: Breaking Development in ${category.charAt(0).toUpperCase() + category.slice(1)} Sector ${i + 1}`,
-      description: `This is a comprehensive report covering the latest developments in ${category}. Our expert analysis reveals important insights that could impact the future of this industry. Stay informed with our detailed coverage of this evolving story.`,
-      content: `In a significant development within the ${category} sector, new information has emerged that could reshape our understanding of current trends. 
+      title: title,
+      description: `Comprehensive coverage of ${title.toLowerCase()}. Our expert team provides in-depth analysis and reporting on this developing story, bringing you the latest updates and insights from reliable sources.`,
+      content: `${title}
 
-This breaking story involves multiple stakeholders and has implications that extend far beyond the immediate industry. Expert analysts have been closely monitoring the situation, providing crucial insights into what these changes might mean for consumers, businesses, and the broader market.
+In a significant development within the ${category} sector, new information has emerged that continues to reshape our understanding of current industry trends and developments.
 
-The development comes at a time when the ${category} industry is experiencing unprecedented growth and transformation. Industry leaders have been quick to respond, with many expressing both optimism and caution about the potential impacts.
+This comprehensive report examines the multifaceted implications of recent developments, providing readers with essential context and expert analysis. Industry specialists have been monitoring these changes closely, offering valuable perspectives on potential outcomes and future directions.
 
-Key stakeholders include major corporations, regulatory bodies, and consumer advocacy groups, all of whom have different perspectives on how this news will affect their respective interests. The complexity of the situation requires careful analysis to understand the full scope of implications.
+The story involves numerous stakeholders across different sectors, each bringing unique viewpoints and expertise to the discussion. These diverse perspectives help illuminate the broader significance of recent events and their potential long-term impact.
 
-Our newsroom has been working around the clock to verify information from multiple sources and provide our readers with the most accurate and up-to-date reporting available. We continue to monitor the situation closely and will provide updates as new information becomes available.
+Current analysis suggests that these developments represent more than isolated incidents, instead indicating broader shifts within the industry landscape. Understanding these changes requires careful examination of underlying factors and emerging patterns.
 
-The story represents a significant shift in how the industry approaches key challenges, potentially setting new precedents for future developments. Early indicators suggest that this could be a turning point that influences policy decisions and corporate strategies for years to come.
+Expert commentary from leading authorities in the field provides additional insight into the complexities surrounding this evolving situation. Their analysis helps contextualize recent events within the broader framework of industry development and market dynamics.
 
-As the situation continues to develop, we remain committed to providing comprehensive coverage that helps our readers understand not just what is happening, but why it matters and what it could mean for the future.`,
+As this story continues to unfold, our newsroom remains committed to providing accurate, timely reporting that keeps readers informed about important developments. We continue to monitor the situation closely and will provide updates as new information becomes available.
+
+The implications of these developments extend beyond immediate industry concerns, potentially influencing policy decisions and strategic planning across multiple sectors. This broader impact underscores the importance of continued attention to these evolving circumstances.`,
       image: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}?w=800&h=400&fit=crop&auto=format&q=80&sig=${Math.random()}`,
       category: category,
       sentiment: ['positive', 'neutral', 'negative'][Math.floor(Math.random() * 3)] as 'positive' | 'neutral' | 'negative',
       summary: [
-        `Breaking: Major developments reported in ${category} sector with industry-wide implications`,
-        `Analysis: Experts predict significant changes ahead as new information emerges`,
-        `Impact: Stakeholders across the industry are reassessing strategies and policies`
+        `Key Development: ${title.substring(0, 100)}...`,
+        `Industry Impact: Experts analyze potential effects on ${category} sector growth and innovation`,
+        `Future Outlook: Continued monitoring reveals emerging trends and strategic implications`
       ],
       publishedAt: new Date(Date.now() - Math.floor(Math.random() * 24 * 60 * 60 * 1000)).toISOString(),
       source: 'NewsWire Network',
@@ -130,9 +193,9 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
   console.log('Attempting to fetch news with params:', defaultParams);
 
   try {
-    // Try the API first with a shorter timeout
+    // Try the API first with a longer timeout for slow server
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     const response = await fetch(`${API_BASE_URL}/`, {
       method: 'POST',
@@ -160,8 +223,19 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
       throw new Error(data.error);
     }
 
-    // Transform the API response
-    const articlesArray = Array.isArray(data) ? data : [data];
+    // Handle both single article and array responses
+    let articlesArray = [];
+    
+    if (Array.isArray(data)) {
+      articlesArray = data;
+    } else if (data.articles && Array.isArray(data.articles)) {
+      articlesArray = data.articles;
+    } else if (data.title || data.headline) {
+      // Single article response
+      articlesArray = [data];
+    } else {
+      throw new Error('Invalid API response format');
+    }
     
     const articles = articlesArray.map((item: NewsApiResponse, index: number) => {
       const content = item.content || item.body || item.text || '';
@@ -169,15 +243,15 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
       const description = item.description || item.summary || (content.substring(0, 200) + '...');
       
       return {
-        id: `api-${Date.now()}-${index}`,
+        id: `api-${Date.now()}-${index}-${Math.random()}`,
         title: title,
         description: description,
-        content: content || `This is a developing story about ${title.toLowerCase()}. Our newsroom is working to bring you comprehensive coverage with detailed analysis and expert insights. The full article content will provide in-depth reporting on this important development, including background information, expert opinions, and potential implications for the future. Stay tuned as we continue to monitor this situation and provide updates as new information becomes available.`,
+        content: content || `This is a comprehensive report about ${title.toLowerCase()}. Our editorial team provides detailed analysis and expert insights into this developing story, offering readers essential context and understanding of the broader implications. The story continues to evolve as new information becomes available from reliable sources and industry experts.`,
         image: item.image || item.image_url || item.img || `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000000)}?w=800&h=400&fit=crop&auto=format&q=80&sig=${Math.random()}`,
         category: params.category || 'technology',
         sentiment: generateSentiment(),
         summary: generateAISummary(content, params.category || 'technology'),
-        publishedAt: item.published_at || item.publishedAt || new Date().toISOString(),
+        publishedAt: item.published_at || item.publishedAt || new Date(Date.now() - Math.floor(Math.random() * 12 * 60 * 60 * 1000)).toISOString(),
         source: item.source || 'NewsWire',
         author: item.author || 'News Team',
         url: item.url || item.link || '#'
@@ -185,6 +259,14 @@ export const fetchNews = async (params: NewsApiParams = {}) => {
     });
 
     console.log('Successfully transformed API articles:', articles.length);
+    
+    // If we got fewer articles than requested, pad with some mock articles
+    if (articles.length < (params.count || 12)) {
+      const additionalMockCount = (params.count || 12) - articles.length;
+      const mockArticles = generateMockArticles(params.category || 'technology', additionalMockCount);
+      articles.push(...mockArticles);
+    }
+    
     return articles;
 
   } catch (error) {
