@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 interface Article {
@@ -21,7 +22,6 @@ interface NewsState {
   selectedCategory: string;
   isLoading: boolean;
   error: string | null;
-  darkMode: boolean;
 }
 
 type NewsAction =
@@ -31,7 +31,6 @@ type NewsAction =
   | { type: 'SET_CATEGORY'; payload: string }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'TOGGLE_DARK_MODE' }
   | { type: 'LOAD_FROM_STORAGE'; payload: Partial<NewsState> };
 
 const initialState: NewsState = {
@@ -40,7 +39,6 @@ const initialState: NewsState = {
   selectedCategory: 'general',
   isLoading: false,
   error: null,
-  darkMode: false,
 };
 
 const newsReducer = (state: NewsState, action: NewsAction): NewsState => {
@@ -62,15 +60,6 @@ const newsReducer = (state: NewsState, action: NewsAction): NewsState => {
       return { ...state, isLoading: action.payload };
     case 'SET_ERROR':
       return { ...state, error: action.payload, isLoading: false };
-    case 'TOGGLE_DARK_MODE':
-      const newDarkMode = !state.darkMode;
-      localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
-      if (newDarkMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      return { ...state, darkMode: newDarkMode };
     case 'LOAD_FROM_STORAGE':
       return { ...state, ...action.payload };
     default:
@@ -90,15 +79,10 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load from localStorage on mount
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
     const selectedCategory = localStorage.getItem('selectedCategory') || 'general';
-    const darkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
-    
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    }
 
     dispatch({
       type: 'LOAD_FROM_STORAGE',
-      payload: { bookmarks, selectedCategory, darkMode }
+      payload: { bookmarks, selectedCategory }
     });
   }, []);
 

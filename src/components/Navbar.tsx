@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Moon, Sun, Bookmark, Menu, X, Home } from 'lucide-react';
+import { Search, Bookmark, Menu, X, Home } from 'lucide-react';
 import { useNews } from '../contexts/NewsContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
                 </div>
               </form>
 
-              {/* Actions */}
+              {/* Bookmarks */}
               <button
                 onClick={handleBookmarksToggle}
                 className="icon-button relative"
@@ -100,14 +100,6 @@ const Navbar: React.FC = () => {
                     {state.bookmarks.length}
                   </span>
                 )}
-              </button>
-
-              <button
-                onClick={() => dispatch({ type: 'TOGGLE_DARK_MODE' })}
-                className="icon-button"
-                title="Toggle theme"
-              >
-                {state.darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
 
               {/* Mobile menu button */}
